@@ -22,3 +22,10 @@ model User {
 
   @@map("users")
 }
+
+model OAuthStates {
+  state     String   @id @map("_id")
+  createdAt DateTime @default(now())
+
+  @@map("oauth_states")
+}
