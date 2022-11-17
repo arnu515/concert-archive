@@ -1,4 +1,5 @@
 from .application import app
+from .routers import routers
 from .util.db import db
 
 
@@ -12,3 +13,6 @@ async def setup_db(app, loop):  # noqa
 async def close_db(app, loop):  # noqa
     print("Disconnected from database")
     await db.disconnect()
+
+
+app.blueprint(routers)
