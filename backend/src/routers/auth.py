@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
-from json import loads
 from uuid import uuid4 as uuid
 
 from sanic import Blueprint, Request, json, redirect
 
+from src.util.auth import auth
 from src.util.auth.providers import providers
+from src.util.auth.tokens import generate_access_token, generate_refresh_token, get_access_token_from_refresh_token
 from src.util.db import db
 
 router = Blueprint("auth", "/api/auth")
@@ -70,4 +71,28 @@ async def callback(req: Request, provider: str):
                 status=400)
     await delete_state(state)
 
-    return json({"user": loads(user.json())})
+    return json({"access_token": generate_access_token(user), "refresh_token": await generate_refresh_token(user)})
+
+
+@router.get("/me")
+@auth()
+async def get_user(req: Request):
+    return json({"user": req.ctx.safe_user})
+
+
+@router.post("/refresh")
+async def refresh(req: Request):
+    if not req.json or type(req.json.get("refresh_token")) != str:
+        return json({"message": "No refresh token provided"}, status=400)
+    token = await get_access_token_from_refresh_token(req.json["refresh_token"])
+    if not token:
+        return json({"message": "Invalid refresh token"}, status=400)
+    return json({"access_token": token, "refresh_token": req.json["refresh_token"]})
+
+
+@router.post("/refresh/invalidate")
+async def invalidate(req: Request):
+    if not req.json or type(req.json.get("refresh_token")) != str:
+        return json({"message": "No refresh token provided"}, status=400)
+    await db.refreshtokens.delete({"token": req.json.get("refresh_token")})
+    return json({"message": "Success"})
