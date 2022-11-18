@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Users {
   id          String   @id @default(cuid()) @map("_id")
   email       String   @unique
   username    String
@@ -35,7 +35,7 @@ model OAuthStates {
 model RefreshTokens {
   token   String @id @default(cuid()) @map("_id")
   user_id String
-  user    User   @relation(fields: [user_id], references: [id])
+  user    Users  @relation(fields: [user_id], references: [id])
 
   @@map("refresh_tokens")
 }

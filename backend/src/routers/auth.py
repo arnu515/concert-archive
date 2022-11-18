@@ -56,9 +56,9 @@ async def callback(req: Request, provider: str):
     user_data = await provider_cls.get_user_info(token["access_token"], token["refresh_token"])
     if type(user_data) == str:
         return json({"message": token}, status=400)
-    user = await db.user.find_unique({"email": user_data["email"]})
+    user = await db.users.find_unique({"email": user_data["email"]})
     if not user:
-        user = await db.user.create(user_data)
+        user = await db.users.create(user_data)
     else:
         if user.provider != provider_cls.name:
             return json({
