@@ -33,9 +33,10 @@ model OAuthStates {
 }
 
 model RefreshTokens {
-  token   String @id @default(cuid()) @map("_id")
-  user_id String
-  user    Users  @relation(fields: [user_id], references: [id])
+  token     String   @id @default(cuid()) @map("_id")
+  user_id   String
+  user      Users    @relation(fields: [user_id], references: [id])
+  createdAt DateTime @default(now())
 
   @@map("refresh_tokens")
 }
