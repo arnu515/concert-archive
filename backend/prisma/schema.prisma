@@ -21,6 +21,7 @@ model User {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
+  RefreshTokens RefreshTokens[]
   @@map("users")
 }
 
@@ -29,4 +30,12 @@ model OAuthStates {
   createdAt DateTime @default(now())
 
   @@map("oauth_states")
+}
+
+model RefreshTokens {
+  token   String @id @default(cuid()) @map("_id")
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  @@map("refresh_tokens")
 }
