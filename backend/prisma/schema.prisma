@@ -23,6 +23,7 @@ model Users {
 
   RefreshTokens RefreshTokens[]
   @@map("users")
+  OAuthCodes OAuthCodes[]
 }
 
 model OAuthStates {
@@ -30,6 +31,15 @@ model OAuthStates {
   createdAt DateTime @default(now())
 
   @@map("oauth_states")
+}
+
+model OAuthCodes {
+  code      String   @id @map("_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  user_id   String
+  user      Users    @relation(fields: [user_id], references: [id])
+
+  @@map("oauth_codes")
 }
 
 model RefreshTokens {
