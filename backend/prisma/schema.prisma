@@ -22,8 +22,8 @@ model Users {
   updated_at  DateTime @updatedAt
 
   RefreshTokens RefreshTokens[]
+  OAuthCodes    OAuthCodes[]
   @@map("users")
-  OAuthCodes OAuthCodes[]
 }
 
 model OAuthStates {
@@ -34,7 +34,7 @@ model OAuthStates {
 }
 
 model OAuthCodes {
-  code      String   @id @map("_id")
+  code      String   @id @default(cuid()) @map("_id")
   createdAt DateTime @default(now()) @map("created_at")
   user_id   String
   user      Users    @relation(fields: [user_id], references: [id])
