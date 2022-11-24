@@ -30,7 +30,8 @@ def auth(required=True):
                 "email": user.email,
                 "username": user.username,
                 "avatar_url": user.avatar_url,
-                "id": user.id
+                "id": user.id,
+                "created_at": user.created_at,
             }
             return await func(request, *args, **kwargs)
 
