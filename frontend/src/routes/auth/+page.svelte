@@ -1,6 +1,6 @@
 <h1 class="text-center mt-12 font-bold text-4xl ">Sign in to Concert</h1>
 
-<div class="bg-base-300 shadow-md border border-black rounded-xl px-6 py-4 mt-8 mx-auto max-w-[400px] min-w-[200px] w-[50%]">
+<div class="card max-w-[400px] min-w-[200px] w-[50%]">
   <h3 class="text-center text-gray-600 uppercase my-4">Use a third-party provider to Sign In</h3>
 
   <div class="flex flex-col gap-4 items-center justify-center">
