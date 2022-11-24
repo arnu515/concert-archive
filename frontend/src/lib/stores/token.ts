@@ -7,12 +7,48 @@ export const tokenLoading = writable<boolean>(true);
 export const user = writable<User | null>(null);
 
 export async function refreshToken(f = fetch) {
+	const tokenFromSS = sessionStorage.getItem('token');
+	const userFromSS = sessionStorage.getItem('user');
+	const expFromSS = sessionStorage.getItem('exp');
+
+	if (
+		typeof tokenFromSS === 'string' &&
+		typeof userFromSS === 'string' &&
+		typeof expFromSS === 'string'
+	) {
+		try {
+			const u = JSON.parse(userFromSS);
+			if (Date.now() > Number(expFromSS)) throw new Error();
+			if (
+				typeof u.id !== 'string' ||
+				typeof u.email !== 'string' ||
+				typeof u.username !== 'string' ||
+				typeof u.avatar_url !== 'string' ||
+				typeof u.created_at !== 'string'
+			)
+				throw new Error();
+			if (tokenFromSS.split('.')?.length !== 3) throw new Error();
+
+			token.set(tokenFromSS);
+			user.set(u);
+
+			const t = setTimeout(() => {
+				refreshToken();
+			}, 1000 * 60 * 60 * 14);
+			timeout.set(t);
+
+			tokenLoading.set(false);
+			return;
+		} catch (e) {
+			console.error(e);
+			sessionStorage.removeItem('token');
+			sessionStorage.removeItem('user');
+			sessionStorage.removeItem('exp');
+		}
+	}
+
 	const res = await f('/api/auth/refresh', { credentials: 'include' });
 	const json: { access_token: string } = await res.json();
-	const t = setTimeout(() => {
-		refreshToken();
-	}, 1000 * 60 * 60 * 14);
-	timeout.set(t);
 	if (res.ok) {
 		token.set(json.access_token);
 	} else {
@@ -31,6 +67,15 @@ export async function refreshToken(f = fetch) {
 		token.set(null);
 		user.set(null);
 	}
+
+	const t = setTimeout(() => {
+		refreshToken();
+	}, 1000 * 60 * 60 * 14);
+	timeout.set(t);
+
+	sessionStorage.setItem('token', json.access_token);
+	sessionStorage.setItem('exp', (Date.now() + 1000 * 60 * 60 * 14).toString());
+	sessionStorage.setItem('user', JSON.stringify(json2.user));
 
 	tokenLoading.set(false);
 }
