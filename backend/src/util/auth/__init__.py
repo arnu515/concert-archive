@@ -24,14 +24,14 @@ def auth(required=True):
                 return await func(request, *args, **kwargs)
             user = await get_user_from_access_token(token)
             if not user and required:
-                return request.ctx.response.json({"message": "Unauthorized"}, status=401)
+                return json({"message": "Unauthorized"}, status=401)
             request.ctx.user = user
             request.ctx.safe_user = {
                 "email": user.email,
                 "username": user.username,
                 "avatar_url": user.avatar_url,
                 "id": user.id,
-                "created_at": user.created_at,
+                "created_at": user.created_at.isoformat(),
             }
             return await func(request, *args, **kwargs)
 
