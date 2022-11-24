@@ -1,12 +1,24 @@
 <script>
 	import Navbar from '$lib/components/Navbar.svelte';
-	import { timeout, tokenLoading } from '$lib/stores/token';
+	import { timeout, tokenLoading , refreshToken} from '$lib/stores/token';
 	import { onMount } from 'svelte';
 	import '../app.postcss';
 	import { page } from '$app/stores';
   import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 
-	onMount(() => {
+	onMount(async () => {
+	const code = new URL(window.location.href).searchParams.get('code');
+	if (code) {
+		const response = await fetch('/api/auth/refresh/token', {
+			method: 'POST',
+			body: JSON.stringify({ code }),
+			credentials: 'include'
+		});
+		if (!response.ok) return;
+	}
+
+	await refreshToken(fetch);
+
 		if (window.location.search.includes('code')) {
 			const qs = $page.url.searchParams;
 			qs.delete('code');
