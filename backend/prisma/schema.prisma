@@ -82,4 +82,6 @@ model Invites {
 
   stage Stages @relation(fields: [stage_id], references: [id])
   user  Users  @relation(fields: [stage_id], references: [id])
+
+  @@map("invites")
 }
