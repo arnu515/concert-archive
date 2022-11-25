@@ -24,6 +24,8 @@ model Users {
   RefreshTokens RefreshTokens[]
   OAuthCodes    OAuthCodes[]
   Stages        Stages[]
+  Invites       Invites[]
+
   @@map("users")
 }
 
@@ -63,11 +65,21 @@ model Stages {
   password   String?
   private    Boolean  @default(false)
   color      String   @default("#00A9A5")
+  owner_id   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  owner_id String
-  owner    Users  @relation(fields: [owner_id], references: [id])
+  owner   Users     @relation(fields: [owner_id], references: [id])
+  Invites Invites[]
 
   @@map("stages")
+}
+
+model Invites {
+  id       String @id @default(cuid()) @map("_id")
+  stage_id String
+  user_id  String
+
+  stage Stages @relation(fields: [stage_id], references: [id])
+  user  Users  @relation(fields: [stage_id], references: [id])
 }
