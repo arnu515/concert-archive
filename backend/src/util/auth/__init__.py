@@ -1,5 +1,6 @@
 from functools import wraps
 
+from prisma.partials import SafeUser
 from sanic import json
 
 from .tokens import get_user_from_access_token
@@ -26,13 +27,7 @@ def auth(required=True):
             if not user and required:
                 return json({"message": "Unauthorized"}, status=401)
             request.ctx.user = user
-            request.ctx.safe_user = {
-                "email": user.email,
-                "username": user.username,
-                "avatar_url": user.avatar_url,
-                "id": user.id,
-                "created_at": user.created_at.isoformat(),
-            }
+            request.ctx.safe_user = SafeUser(**user.dict())
             return await func(request, *args, **kwargs)
 
         return wrapper

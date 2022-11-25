@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timedelta
+from json import loads
 from urllib.parse import urlparse
 from uuid import uuid4 as uuid
 
@@ -80,7 +81,7 @@ async def callback(req: Request, provider: str):
 @router.get("/me")
 @auth()
 async def get_user(req: Request):
-    return json({"user": req.ctx.safe_user})
+    return json({"user": loads(req.ctx.safe_user.json())})
 
 
 @router.post("/refresh/token")
