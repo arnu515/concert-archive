@@ -205,3 +205,15 @@ async def update_stage(req: Request, body: UpdateStageRequest, sid: str):
         **password_up
     }, {"id": sid})
     return json({"stage": loads(SafeStage(**stage.dict()).json())})
+
+
+@router.delete("/<sid:str>")
+@auth()
+async def delete_stage(req: Request, sid: str):
+    stage = await db.stages.find_unique(where={"id": sid})
+    if not stage:
+        return json({"message": "Stage not found"}, status=404)
+    if stage.owner_id != req.ctx.user.id:
+        return json({"message": "You don't have access to this stage"}, status=403)
+    await db.stages.delete({"id": sid})
+    return json({"stage": loads(SafeStage(**stage.dict()).json())})
