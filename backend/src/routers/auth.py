@@ -24,7 +24,7 @@ async def delete_state(state: str):
 
 async def check_state(state: str):
     data = await db.oauthstates.find_unique({"state": state})
-    if data and data.createdAt.replace(tzinfo=None) < (datetime.utcnow() - timedelta(minutes=15)).replace(
+    if data and data.created_at.replace(tzinfo=None) < (datetime.utcnow() - timedelta(minutes=15)).replace(
             tzinfo=None):
         return False
     return data is not None

@@ -39,7 +39,7 @@ async def get_access_token_from_refresh_token(refresh_token: str):
     token = await db.refreshtokens.find_unique({"token": refresh_token}, {"user": True})
     if not token:
         return None
-    if token.createdAt.replace(tzinfo=None) < (datetime.datetime.utcnow() - datetime.timedelta(days=30)).replace(
+    if token.created_at.replace(tzinfo=None) < (datetime.datetime.utcnow() - datetime.timedelta(days=30)).replace(
             tzinfo=None):
         return None
     return generate_access_token(token.user)
