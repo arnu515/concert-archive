@@ -23,6 +23,7 @@ model Users {
 
   RefreshTokens RefreshTokens[]
   OAuthCodes    OAuthCodes[]
+  Stages        Stages[]
   @@map("users")
 }
 
@@ -49,4 +50,17 @@ model RefreshTokens {
   createdAt DateTime @default(now())
 
   @@map("refresh_tokens")
+}
+
+model Stages {
+  id       String  @id @default(cuid()) @map("_id")
+  name     String
+  password String?
+  private  Boolean @default(false)
+  color    String  @default("#00A9A5")
+
+  owner_id String
+  owner    Users  @relation(fields: [owner_id], references: [id])
+
+  @@map("stages")
 }
