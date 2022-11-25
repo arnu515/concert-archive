@@ -21,10 +21,10 @@ model Users {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  RefreshTokens RefreshTokens[]
-  OAuthCodes    OAuthCodes[]
-  Stages        Stages[]
-  Invites       Invites[]
+  refresh_tokens RefreshTokens[]
+  oauth_codes    OAuthCodes[]
+  stages         Stages[]
+  invites        Invites[]
 
   @@map("users")
 }
@@ -70,7 +70,7 @@ model Stages {
   updated_at DateTime @updatedAt
 
   owner   Users     @relation(fields: [owner_id], references: [id])
-  Invites Invites[]
+  invites Invites[]
 
   @@map("stages")
 }
