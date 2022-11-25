@@ -162,3 +162,46 @@ async def create_stage(req: Request, body: CreateStageRequest):
         "owner_id": req.ctx.user.id
     })
     return json({"stage": SafeStage(**stage.dict()).dict()})
+
+
+class UpdateStageRequest(CreateStageRequest):
+    name: str | None
+    use_password_in_body: bool = False
+
+    @classmethod
+    @validator('name')
+    def name_validator(cls, value: Any) -> str | None:
+        if value is None:
+            return None
+        if type(value) != str:
+            raise ValueError("Name must be a string")
+        if len(value.strip()) < 1:
+            raise ValueError("Name must be at least 1 character long")
+        return value.strip()
+
+    @classmethod
+    @validator('use_password_in_body')
+    def use_password_in_body_validator(cls, value: Any) -> True:
+        return bool(value)
+
+
+@router.put("/<sid:str>")
+@auth()
+@validate(json=UpdateStageRequest)
+async def update_stage(req: Request, body: UpdateStageRequest, sid: str):
+    stage = await db.stages.find_unique(where={"id": sid})
+    if not stage:
+        return json({"message": "Stage not found"}, status=404)
+    if stage.owner_id != req.ctx.user.id:
+        return json({"message": "You don't have access to this stage"}, status=403)
+    password_up = {}
+    if body.use_password_in_body:
+        password_up = {
+            "password": hashpw(body.password.encode(), gensalt(12)).decode() if body.password is not None else None}
+    stage = await db.stages.update({
+        "name": body.name or stage.name,
+        "color": body.color,
+        "private": body.private,
+        **password_up
+    }, {"id": sid})
+    return json({"stage": loads(SafeStage(**stage.dict()).json())})
