@@ -1,3 +1,4 @@
+from json import loads
 from typing import Any
 
 from bcrypt import hashpw, gensalt
@@ -10,6 +11,96 @@ from src.util.auth import auth
 from src.util.db import db
 
 router = Blueprint("stages", "/api/stages")
+
+
+@router.get("/")
+async def get_public_stages(req: Request):
+    limit = type(req.args.get("limit")) == str and int(req.args.get("limit")) or 10
+    offset = type(req.args.get("offset")) == str and int(req.args.get("offset")) or 0
+    sort = type(req.args.get("sort")) == str and req.args.get("sort") or "created_at"
+    sort_order = type(req.args.get("sort_order")) == str and req.args.get("sort_order").lower()
+    if sort_order not in ("asc", "desc"):
+        sort_order = "desc"
+
+    stages = await db.stages.find_many(
+        where={"private": False},
+        take=limit,
+        skip=offset,
+        order={sort: sort_order}
+    )
+    return json([loads(SafeStage(**stage.dict()).json()) for stage in stages])
+
+
+@router.get('/all')
+@auth()
+async def get_all_stages(req: Request):
+    limit = type(req.args.get("limit")) == str and int(req.args.get("limit")) or 10
+    offset = type(req.args.get("offset")) == str and int(req.args.get("offset")) or 0
+    sort = type(req.args.get("sort")) == str and req.args.get("sort") or "created_at"
+    sort_order = type(req.args.get("sort_order")) == str and req.args.get("sort_order").lower()
+    if sort_order not in ("asc", "desc"):
+        sort_order = "desc"
+
+    stages = await db.stages.find_many(
+        where={"OR": [{"invites": {"some": {"user_id": req.ctx.user.id}}}, {"owner_id": req.ctx.user.id}]},
+        take=limit,
+        skip=offset,
+        order={sort: sort_order}
+    )
+    return json({"stages": [loads(SafeStage(**stage.dict()).json()) for stage in stages]})
+
+
+@router.get("/<sid:str>")
+@auth(False)
+async def get_stage_by_id(req: Request, sid: str):
+    uid = req.ctx.user.id if hasattr(req.ctx, "user") else None
+    stage = await db.stages.find_first(
+        where={"OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}]} if uid else {
+            "id": sid},
+    )
+    if not stage:
+        return json({"message": "Stage not found"}, status=404)
+    if stage.private and stage.owner_id != uid:
+        return json({"message": "You don't have access to this stage"}, status=403)
+    return json({"stage": loads(SafeStage(**stage.dict()).json())})
+
+
+@router.get('/by/<uid:str>')
+async def get_stages_by_uid(req: Request, uid: str):
+    limit = type(req.args.get("limit")) == str and int(req.args.get("limit")) or 10
+    offset = type(req.args.get("offset")) == str and int(req.args.get("offset")) or 0
+    sort = type(req.args.get("sort")) == str and req.args.get("sort") or "created_at"
+    sort_order = type(req.args.get("sort_order")) == str and req.args.get("sort_order").lower()
+    if sort_order not in ("asc", "desc"):
+        sort_order = "desc"
+
+    stages = await db.stages.find_many(
+        where={"private": False, "owner_id": uid},
+        take=limit,
+        skip=offset,
+        order={sort: sort_order}
+    )
+    return json([loads(SafeStage(**stage.dict()).json()) for stage in stages])
+
+
+@router.get('/all/by/<uid:str>')
+@auth()
+async def get_all_stages_by_uid(req: Request, uid: str):
+    limit = type(req.args.get("limit")) == str and int(req.args.get("limit")) or 10
+    offset = type(req.args.get("offset")) == str and int(req.args.get("offset")) or 0
+    sort = type(req.args.get("sort")) == str and req.args.get("sort") or "created_at"
+    sort_order = type(req.args.get("sort_order")) == str and req.args.get("sort_order").lower()
+    if sort_order not in ("asc", "desc"):
+        sort_order = "desc"
+
+    stages = await db.stages.find_many(
+        where={"OR": [{"invites": {"some": {"user_id": req.ctx.user.id}}, "owner_id": uid},
+                      {"owner_id": req.ctx.user.id}]},
+        take=limit,
+        skip=offset,
+        order={sort: sort_order}
+    )
+    return json({"stages": [loads(SafeStage(**stage.dict()).json()) for stage in stages]})
 
 
 class CreateStageRequest(BaseModel):
