@@ -2,7 +2,7 @@ from json import loads
 from typing import Any
 
 from bcrypt import hashpw, gensalt
-from prisma.partials import SafeStage
+from prisma.partials import SafeStage, SafeUser
 from pydantic import BaseModel, validator
 from sanic import Blueprint, Request, json
 from sanic_ext import validate
@@ -26,7 +26,8 @@ async def get_public_stages(req: Request):
         where={"private": False},
         take=limit,
         skip=offset,
-        order={sort: sort_order}
+        order={sort: sort_order},
+        include={"owner": True}
     )
     return json([loads(SafeStage(**stage.dict()).json()) for stage in stages])
 
@@ -46,7 +47,8 @@ async def get_all_stages(req: Request):
         where={"OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}]} if uid else {"private": False},
         take=limit,
         skip=offset,
-        order={sort: sort_order}
+        order={sort: sort_order},
+        include={"owner": True}
     )
     return json({"stages": [loads(SafeStage(**stage.dict()).json()) for stage in stages]})
 
@@ -58,6 +60,7 @@ async def get_stage_by_id(req: Request, sid: str):
     stage = await db.stages.find_first(
         where={"OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}]} if uid else {
             "id": sid},
+        include={"owner": True}
     )
     if not stage:
         return json({"message": "Stage not found"}, status=404)
@@ -79,7 +82,8 @@ async def get_stages_by_uid(req: Request, uid: str):
         where={"private": False, "owner_id": uid},
         take=limit,
         skip=offset,
-        order={sort: sort_order}
+        order={sort: sort_order},
+        include={"owner": True}
     )
     return json([loads(SafeStage(**stage.dict()).json()) for stage in stages])
 
@@ -105,7 +109,8 @@ async def get_all_stages_by_uid(req: Request, uid: str):
         where=query,
         take=limit,
         skip=offset,
-        order={sort: sort_order}
+        order={sort: sort_order},
+        include={"owner": True}
     )
     return json({"stages": [loads(SafeStage(**stage.dict()).json()) for stage in stages]})
 
@@ -167,8 +172,10 @@ async def create_stage(req: Request, body: CreateStageRequest):
         "color": body.color,
         "private": body.private,
         "owner_id": req.ctx.user.id
-    })
-    return json({"stage": SafeStage(**stage.dict()).dict()})
+    }, include={"owner": True})
+    s = SafeStage(**stage.dict())
+    s.owner = SafeUser(**stage.owner.dict())
+    return json({"stage": loads(s.json())})
 
 
 class UpdateStageRequest(CreateStageRequest):
@@ -210,14 +217,14 @@ async def update_stage(req: Request, body: UpdateStageRequest, sid: str):
         "color": body.color,
         "private": body.private,
         **password_up
-    }, {"id": sid})
+    }, {"id": sid}, include={"owner": True})
     return json({"stage": loads(SafeStage(**stage.dict()).json())})
 
 
 @router.delete("/<sid:str>")
 @auth()
 async def delete_stage(req: Request, sid: str):
-    stage = await db.stages.find_unique(where={"id": sid})
+    stage = await db.stages.find_unique(where={"id": sid}, include={"owner": True})
     if not stage:
         return json({"message": "Stage not found"}, status=404)
     if stage.owner_id != req.ctx.user.id:
