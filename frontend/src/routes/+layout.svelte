@@ -7,6 +7,7 @@
   import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
   import toasts from '$lib/stores/toasts';
   import {slide} from "svelte/transition"
+  import { fetchAllStages } from '$lib/stores/stages';
 
 	onMount(async () => {
 	const code = new URL(window.location.href).searchParams.get('code');
@@ -20,6 +21,7 @@
 	}
 
 	await refreshToken(fetch);
+  await fetchAllStages()
 
 		if (window.location.search.includes('code')) {
 			const qs = $page.url.searchParams;
