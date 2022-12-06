@@ -26,8 +26,9 @@ def auth(required=True):
             user = await get_user_from_access_token(token)
             if not user and required:
                 return json({"message": "Unauthorized"}, status=401)
-            request.ctx.user = user
-            request.ctx.safe_user = SafeUser(**user.dict())
+            if user:
+                request.ctx.user = user
+                request.ctx.safe_user = SafeUser(**user.dict())
             return await func(request, *args, **kwargs)
 
         return wrapper
