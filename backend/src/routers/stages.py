@@ -32,7 +32,7 @@ async def get_public_stages(req: Request):
 
 
 @router.get('/all')
-@auth()
+@auth(False)
 async def get_all_stages(req: Request):
     limit = type(req.args.get("limit")) == str and int(req.args.get("limit")) or 10
     offset = type(req.args.get("offset")) == str and int(req.args.get("offset")) or 0
@@ -41,8 +41,9 @@ async def get_all_stages(req: Request):
     if sort_order not in ("asc", "desc"):
         sort_order = "desc"
 
+    uid = req.ctx.user.id if hasattr(req.ctx, "user") else None
     stages = await db.stages.find_many(
-        where={"OR": [{"invites": {"some": {"user_id": req.ctx.user.id}}}, {"owner_id": req.ctx.user.id}]},
+        where={"OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}]} if uid else {"private": False},
         take=limit,
         skip=offset,
         order={sort: sort_order}
@@ -84,7 +85,7 @@ async def get_stages_by_uid(req: Request, uid: str):
 
 
 @router.get('/all/by/<uid:str>')
-@auth()
+@auth(False)
 async def get_all_stages_by_uid(req: Request, uid: str):
     limit = type(req.args.get("limit")) == str and int(req.args.get("limit")) or 10
     offset = type(req.args.get("offset")) == str and int(req.args.get("offset")) or 0
@@ -93,9 +94,15 @@ async def get_all_stages_by_uid(req: Request, uid: str):
     if sort_order not in ("asc", "desc"):
         sort_order = "desc"
 
+    cuid = req.ctx.user.id if hasattr(req.ctx, "user") else None
+    if not cuid:
+        query = {"private": False}
+    if cuid == uid:
+        query = {"owner_id": cuid}
+    else:
+        query = {"invites": {"some": {"user_id": cuid}}, "owner_id": uid}
     stages = await db.stages.find_many(
-        where={"OR": [{"invites": {"some": {"user_id": req.ctx.user.id}}, "owner_id": uid},
-                      {"owner_id": req.ctx.user.id}]},
+        where=query,
         take=limit,
         skip=offset,
         order={sort: sort_order}
