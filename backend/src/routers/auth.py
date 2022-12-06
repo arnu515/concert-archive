@@ -14,8 +14,8 @@ from src.util.db import db
 router = Blueprint("auth", "/api/auth")
 
 
-async def save_state(state: str):
-    await db.oauthstates.create({"state": state})
+async def save_state(state: str, next_="/"):
+    await db.oauthstates.create({"state": state, "next": next_})
 
 
 async def delete_state(state: str):
@@ -27,16 +27,20 @@ async def check_state(state: str):
     if data and data.created_at.replace(tzinfo=None) < (datetime.utcnow() - timedelta(minutes=15)).replace(
             tzinfo=None):
         return False
-    return data is not None
+    return data.next if data else None
 
 
 @router.get("/<provider:str>/oauth")
-async def redirect_to_oauth(_, provider: str):
+async def redirect_to_oauth(req, provider: str):
     provider_cls = providers.get(provider)
     if not provider_cls:
         return json({"message": "Invalid provider"}, status=404)
+    next_ = req.args.get("next", "/")
+    parsed = urlparse(next_)
+    if parsed.netloc and parsed.netloc != "localhost:3000":
+        return json({"message": "Invalid next url"}, status=400)
     state = str(uuid())
-    await save_state(state)
+    await save_state(state, next_)
     return redirect(
         f"{provider_cls.auth_url}?client_id={provider_cls.client_id}&scope={provider_cls.scopes}&state={state}")
 
@@ -52,7 +56,8 @@ async def callback(req: Request, provider: str):
     state = req.args.get("state")
     if not state:
         return json({"message": "No state provided"}, status=400)
-    if not await check_state(state):
+    next_: str = await check_state(state)
+    if not next_:
         return json({"message": "Invalid state"}, status=400)
     token = await provider_cls.get_token(code)
     if type(token) == str:
@@ -70,12 +75,13 @@ async def callback(req: Request, provider: str):
                 status=400)
         if user.provider_id != user_data["provider_id"]:
             return json({
-                "message": "Invalid account. Please contact support. Your email does not match your \"" + user.provider + "\" id"},
-                status=400)
+                "message": "Invalid account. Please contact support. Your email does not match your \""
+                           + user.provider + "\" id"}, status=400)
     await delete_state(state)
 
     code = await db.oauthcodes.create({"user": {"connect": {"id": user.id}}})
-    return redirect(f"{os.getenv('FRONTEND_URL')}?code={code.code}")
+    return redirect(
+        f"{os.getenv('FRONTEND_URL')}/{next_.replace('/', '', 1) if next_.startswith('/') else next_}?code={code.code}")
 
 
 @router.get("/me")
