@@ -6,7 +6,7 @@ export const timeout = writable<NodeJS.Timeout | null>(null);
 export const tokenLoading = writable<boolean>(true);
 export const user = writable<User | null>(null);
 
-export async function refreshToken(f = fetch) {
+export async function refreshToken(f = fetch, force = false) {
 	const tokenFromSS = sessionStorage.getItem('token');
 	const userFromSS = sessionStorage.getItem('user');
 	const expFromSS = sessionStorage.getItem('exp');
@@ -17,6 +17,7 @@ export async function refreshToken(f = fetch) {
 		typeof expFromSS === 'string'
 	) {
 		try {
+			if (force) throw new Error();
 			const u = JSON.parse(userFromSS);
 			if (Date.now() > Number(expFromSS)) throw new Error();
 			if (

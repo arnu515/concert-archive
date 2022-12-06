@@ -1,3 +1,4 @@
+import { fetch } from '$lib/util/fetch';
 import type { Stage } from '$lib/util/types';
 import { get, writable } from 'svelte/store';
 import { addToasts } from './toasts';

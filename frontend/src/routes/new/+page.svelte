@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import token, {user} from "$lib/stores/token"
   import { addToasts } from "$lib/stores/toasts";
+  import { fetch } from "$lib/util/fetch";
 
   let selectedColor = '#00A9A5'
   let createStageBtn: HTMLButtonElement
