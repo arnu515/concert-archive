@@ -1,6 +1,6 @@
 <script>
 	import Navbar from '$lib/components/Navbar.svelte';
-	import { timeout, tokenLoading , refreshToken} from '$lib/stores/token';
+	import { timeout, tokenLoading } from '$lib/stores/token';
 	import { onMount } from 'svelte';
 	import '../app.postcss';
 	import { page } from '$app/stores';
@@ -10,17 +10,6 @@
   import { fetchAllStages } from '$lib/stores/stages';
 
 	onMount(async () => {
-	const code = new URL(window.location.href).searchParams.get('code');
-	if (code) {
-		const response = await fetch('/api/auth/refresh/token', {
-			method: 'POST',
-			body: JSON.stringify({ code }),
-			credentials: 'include'
-		});
-		if (!response.ok) return;
-	}
-
-	await refreshToken(fetch);
   await fetchAllStages()
 
 		if (window.location.search.includes('code')) {
