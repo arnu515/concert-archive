@@ -8,3 +8,16 @@
 		@apply mx-auto mt-8 rounded-xl border border-black bg-base-300 px-6 py-4 shadow-md;
 	}
 }
+
+html {
+	scrollbar-width: thin;
+	scrollbar-color: theme(colors.primary) theme(colors.base-300);
+}
+html::-webkit-scrollbar {
+	width: 4px;
+	background-color: theme(colors.base-300);
+}
+html::-webkit-scrollbar-thumb {
+	width: 4px;
+	background-color: theme(colors.primary);
+}
