@@ -62,10 +62,10 @@ async def get_stage_by_id(req: Request, sid: str):
             "id": sid},
         include={"owner": True}
     )
+    if not uid and stage.private:
+        return json({"message": "Stage not found. You may need to login to access private stages"}, status=404)
     if not stage:
-        return json({"message": "Stage not found"}, status=404)
-    if stage.private and stage.owner_id != uid:
-        return json({"message": "You don't have access to this stage"}, status=403)
+        return json({"message": "Stage not found. You may need to login to access private stages"}, status=404)
     return json({"stage": loads(SafeStage(**stage.dict()).json())})
 
 
