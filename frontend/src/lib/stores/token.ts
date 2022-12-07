@@ -45,6 +45,8 @@ export async function refreshToken(f = fetch, force = false) {
 			sessionStorage.removeItem('token');
 			sessionStorage.removeItem('user');
 			sessionStorage.removeItem('exp');
+			token.set(null);
+			user.set(null);
 		}
 	}
 
