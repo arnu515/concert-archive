@@ -10,7 +10,7 @@
   let isJoined =true
 
   onMount(() => {
-    if (!$user) return goto("/")
+    if (!$user) return goto("/auth?next=" + encodeURIComponent(window.location.pathname))
   });
 </script>
 
