@@ -14,7 +14,7 @@
   });
 </script>
 
-{#if isJoined}
+{#if isJoined && $user}
 <main>
   <div class="flex flex-col gap-2 rounded-xl bg-base-300 px-6 py-4 border overflow-hidden" style="border-color: {data.stage.color}">
     <h1 class="text-3xl font-bold mb-4 mt-4 flex items-center gap-4 truncate min-h-[2.5rem]" style="color: {data.stage.color}"><span class="text-white">Stage:</span> {data.stage.name}</h1>
