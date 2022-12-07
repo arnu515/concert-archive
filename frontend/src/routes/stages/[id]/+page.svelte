@@ -10,7 +10,7 @@
   let isJoined =true
 
   onMount(() => {
-    // if (!$user) return goto("/")
+    if (!$user) return goto("/")
   });
 </script>
 
@@ -233,7 +233,9 @@
         <img src="{data.stage.owner.avatar_url}" alt="{data.stage.owner.username}'s avatar" class="w-6 h-6 rounded-full border border-white">
         <span><strong>{data.stage.owner.username}</strong> uploaded a file</span>
         </div>
-        <div class="bg-base-100 items-center rounded-xl my-4 flex px-4 py-2 border border-gray-500"><p class="text-xl font-mono"><span class="badge badge-accent">PDF</span> asdfasdf...sad.pdf</p> <button class="btn-ghost btn-circle btn-sm ml-auto">dl</button></div>
+        <div class="bg-base-100 items-center rounded-xl my-4 flex px-4 py-2 border border-gray-500"><p class="text-xl font-mono"><span class="badge badge-accent">PDF</span> asdfasdf...sad.pdf</p> <button class="btn btn-ghost btn-circle btn-sm ml-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+</svg></button></div>
       </div>
     </div>
     <input type="text" class="input w-full m-1 mt-auto" placeholder="Type message and press enter" aria-label="Message">
