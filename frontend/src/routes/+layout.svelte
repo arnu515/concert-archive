@@ -46,7 +46,7 @@
 </svg>
 </button>
       </h3>
-      <p class="text-sm">{t.title}</p>
+      <p class="text-sm">{t.message}</p>
     </div>
   {/each}
 </div>
