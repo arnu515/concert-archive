@@ -44,7 +44,8 @@ async def get_all_stages(req: Request):
 
     uid = req.ctx.user.id if hasattr(req.ctx, "user") else None
     stages = await db.stages.find_many(
-        where={"OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}]} if uid else {"private": False},
+        where={"OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}, {"private": False}]} if uid else {
+            "private": False},
         take=limit,
         skip=offset,
         order={sort: sort_order},
@@ -58,7 +59,8 @@ async def get_all_stages(req: Request):
 async def get_stage_by_id(req: Request, sid: str):
     uid = req.ctx.user.id if hasattr(req.ctx, "user") else None
     stage = await db.stages.find_first(
-        where={"OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}]} if uid else {
+        where={"id": sid,
+               "OR": [{"invites": {"some": {"user_id": uid}}}, {"owner_id": uid}, {"private": False}]} if uid else {
             "id": sid},
         include={"owner": True}
     )
@@ -102,9 +104,9 @@ async def get_all_stages_by_uid(req: Request, uid: str):
     if not cuid:
         query = {"private": False}
     if cuid == uid:
-        query = {"owner_id": cuid}
+        query = {"owner_id": cuid, "private": False}
     else:
-        query = {"invites": {"some": {"user_id": cuid}}, "owner_id": uid}
+        query = {"invites": {"some": {"user_id": cuid}}, "owner_id": uid, "private": False}
     stages = await db.stages.find_many(
         where=query,
         take=limit,
