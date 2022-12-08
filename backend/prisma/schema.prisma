@@ -26,6 +26,7 @@ model Users {
   stages         Stages[]
   invites        Invites[]
 
+  ChatMessages ChatMessages[]
   @@map("users")
 }
 
@@ -73,6 +74,7 @@ model Stages {
   owner   Users     @relation(fields: [owner_id], references: [id])
   invites Invites[]
 
+  ChatMessages ChatMessages[]
   @@map("stages")
 }
 
@@ -85,4 +87,25 @@ model Invites {
   user  Users  @relation(fields: [stage_id], references: [id])
 
   @@map("invites")
+}
+
+model ChatMessages {
+  id           String          @id @default(cuid()) @map("_id")
+  type         ChatMessageType @default(TEXT)
+  message_data String          @default("")
+  stage_id     String
+  user_id      String
+  created_at   DateTime        @default(now())
+  updated_at   DateTime        @updatedAt
+
+  stage Stages @relation(fields: [stage_id], references: [id])
+  user  Users  @relation(fields: [stage_id], references: [id])
+
+  @@map("chat_messages")
+}
+
+enum ChatMessageType {
+  TEXT
+  FILE
+  EVENT
 }
