@@ -7,8 +7,8 @@ from pydantic import BaseModel, validator
 from sanic import Blueprint, Request, json
 from sanic_ext import validate
 
-from src.util.auth import auth
-from src.util.db import db
+from concert_backend.util.auth import auth
+from concert_backend.util.db import db
 
 router = Blueprint("stages", "/api/stages")
 

@@ -4,7 +4,7 @@ import os
 from jwt import encode, PyJWTError, decode
 from prisma.models import Users
 
-from src.util.db import db
+from concert_backend.util.db import db
 
 JWT_SECRET = os.getenv("JWT_SECRET", "secret")
 JWT_EXPIRY = int(os.getenv("JWT_EXPIRY", 900))

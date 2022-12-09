@@ -5,11 +5,11 @@ from livekit import DataPacketKind, ParticipantPermission
 from sanic import Blueprint, Request, json
 from sanic.request import File
 
-from src.util.auth import auth
-from src.util.b2 import upload_file
-from src.util.db import db
-from src.util.livekit.client import client
-from src.util.livekit.token import create_livekit_token, livekit, ClaimGrants
+from concert_backend.util.auth import auth
+from concert_backend.util.b2 import upload_file
+from concert_backend.util.db import db
+from concert_backend.util.livekit.client import client
+from concert_backend.util.livekit.token import create_livekit_token, livekit, ClaimGrants
 
 router = Blueprint("stage", "/api/stage/<sid:str>")
 

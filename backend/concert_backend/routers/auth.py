@@ -6,10 +6,10 @@ from uuid import uuid4 as uuid
 
 from sanic import Blueprint, Request, json, redirect
 
-from src.util.auth import auth
-from src.util.auth.providers import providers
-from src.util.auth.tokens import generate_refresh_token, get_access_token_from_refresh_token
-from src.util.db import db
+from concert_backend.util.auth import auth
+from concert_backend.util.auth.providers import providers
+from concert_backend.util.auth.tokens import generate_refresh_token, get_access_token_from_refresh_token
+from concert_backend.util.db import db
 
 router = Blueprint("auth", "/api/auth")
 
