@@ -4,7 +4,7 @@ from sanic import Sanic, json
 
 app = Sanic("concert_backend")
 
-if os.getenv("DEV") or bool(int(os.getenv("ENABLE_CORS"))):
+if os.getenv("DEV") or bool(int(os.getenv("ENABLE_CORS", 0))):
     app.config.CORS = True
     app.config.CORS_ALLOW_HEADERS = "*"
     app.config.CORS_ALWAYS_SEND = True
