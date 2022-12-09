@@ -99,7 +99,7 @@ model ChatMessages {
   updated_at   DateTime        @updatedAt
 
   stage Stages @relation(fields: [stage_id], references: [id])
-  user  Users  @relation(fields: [stage_id], references: [id])
+  user  Users  @relation(fields: [user_id], references: [id])
 
   @@map("chat_messages")
 }
