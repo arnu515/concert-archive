@@ -1,0 +1,15 @@
+backend/.idea
+backend/.vscode
+backend/venv
+backend/static
+frontend/.vscode
+frontend/.svelte-kit
+!frontend/.svelte-kit/tsconfig.json
+frontend/node_modules
+frontend/.editorconfig
+frontend/.eslintignore
+frontend/.eslintrc.cjs
+frontend/.gitignore
+frontend/.npmrc
+frontend/.prettierignore
+frontend/.prettierrc

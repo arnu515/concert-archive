@@ -1,0 +1,102 @@
+# Build frontend and backend
+FROM python:3.11-alpine3.17 AS builder
+
+# Whether to use doppler for secrets
+ARG USE_DOPPLER="false"
+
+# If the above option is true, you need to pass in these variables
+ARG DOPPLER_TOKEN=""
+ARG DOPPLER_PROJECT=""
+ARG DOPPLER_CONFIG=""
+
+RUN mkdir /app /app/frontend
+WORKDIR /app
+
+# INSTALL DOPPLER
+RUN if [ "$USE_DOPPLER" = "true" ] ; then \
+    apk add --no-cache wget gnupg && wget -t 3 -qO- https://cli.doppler.com/install.sh | sh; \
+    fi
+
+# Download the doppler environment variables
+RUN if [ "$USE_DOPPLER" = "true" ] ; then \
+    doppler configure set token $DOPPLER_TOKEN --scope / && \
+    doppler secrets download --project $DOPPLER_PROJECT --config $DOPPLER_CONFIG --format env --no-file > .env; \
+    fi
+
+# BUILDING FRONTEND
+
+# Install nodejs version 18 and pnpm
+RUN apk add --no-cache nodejs npm && npm install -g pnpm
+
+# Copy packager files
+COPY ./frontend/package.json ./frontend
+COPY ./frontend/pnpm-lock.yaml ./frontend
+
+# Install frontend dependencies
+RUN cd frontend && pnpm install && cd ..
+
+# Copy the rest of the files
+COPY ./frontend ./frontend
+
+# Build the app
+RUN if [ "$USE_DOPPLER" = "true" ] ; then \
+    echo "Using doppler" && \
+    cat .env && \
+    cd frontend && doppler run -p $DOPPLER_PROJECT -c $DOPPLER_CONFIG --token $DOPPLER_TOKEN -- pnpm build && cd ..; \
+    else \
+    cd frontend && pnpm build && cd ..;  \
+    fi
+
+# BUILDING BACKEND
+COPY ./backend/pyproject.toml .
+COPY ./backend/poetry.lock .
+
+# Setup python
+ENV PYTHONUNBUFFERED=1
+RUN python3 -m venv /venv
+
+# Install poetry
+RUN apk add alpine-sdk && /venv/bin/pip install --upgrade pip poetry && /venv/bin/poetry config virtualenvs.create false
+
+# Install backend dependencies
+RUN /venv/bin/poetry export -f requirements.txt --output requirements.txt && /venv/bin/pip install -r requirements.txt
+
+# Copy the rest of the files
+COPY ./backend .
+# required to build
+COPY ./README.md .
+
+# Setup prisma
+RUN apk add gcc musl-dev yaml-dev yaml libffi-dev
+
+# Install a special version of prisma
+RUN /venv/bin/pip uninstall prisma -y && /venv/bin/pip install git+https://github.com/RobertCraigie/prisma-client-py@refactor/remove-pkg-cli
+
+# Add venv to path. Required for prisma to work properly
+RUN export OLD_PATH=$PATH && export PATH="/venv/bin:$PATH" && \
+    # Fetch prisma binaries \
+    prisma py fetch && \
+    # Generate prisma client \
+    prisma py generate --schema ./prisma/schema.prisma && \
+    # Build \
+    /venv/bin/poetry build && /venv/bin/pip install dist/*.whl && \
+    # Restore path \
+    export PATH=$OLD_PATH
+
+FROM python:3.11-alpine3.17 AS runner
+
+RUN mkdir /app
+WORKDIR /app
+
+# Copy the built frontend
+COPY --from=builder /app/frontend/build ./static
+
+# Copy the built backend
+COPY --from=builder /venv /venv
+COPY --from=builder /app/main.py .
+COPY --from=builder /app/.env .
+
+RUN ls -al
+
+# Run the app
+CMD ["/venv/bin/python", "main.py"]
