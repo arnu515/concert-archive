@@ -181,6 +181,21 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "livekit-server-sdk-python"
+version = "0.4.0"
+description = "Livekit Server SDK for Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+pyjwt = ">=2.0.0,<3.0.0"
+twirp = ">=0.0.5,<0.1.0"
+
+[package.extras]
+dev = ["black", "build", "coverage", "isort", "pre-commit", "pytest", "pytest-cov", "twine"]
+
+[[package]]
 name = "logfury"
 version = "1.0.1"
 description = "('Toolkit for responsible, low-boilerplate logging of library method calls',)"
@@ -225,6 +240,14 @@ typing-extensions = ">=3.7"
 all = ["blue (==0.9.1)", "mkdocs (==1.4.2)", "mkdocs-material (==8.5.9)", "nox (==2022.8.7)", "pre-commit (==2.20.0)", "rtoml (==0.9.0)", "twine (==4.0.1)", "typer (==0.7.0)", "wheel (==0.38.4)"]
 dev = ["blue (==0.9.1)", "nox (==2022.8.7)", "pre-commit (==2.20.0)", "rtoml (==0.9.0)", "twine (==4.0.1)", "typer (==0.7.0)", "wheel (==0.38.4)"]
 docs = ["mkdocs (==1.4.2)", "mkdocs-material (==8.5.9)"]
+
+[[package]]
+name = "protobuf"
+version = "4.21.11"
+description = ""
+category = "main"
+optional = false
+python-versions = ">=3.7"
 
 [[package]]
 name = "pydantic"
@@ -383,6 +406,20 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "structlog"
+version = "22.3.0"
+description = "Structured Logging for Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+dev = ["structlog[docs,tests,typing]"]
+docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-mermaid", "twisted"]
+tests = ["coverage[toml]", "freezegun (>=0.2.8)", "pretend", "pytest (>=6.0)", "pytest-asyncio (>=0.17)", "simplejson"]
+typing = ["mypy", "rich", "twisted"]
+
+[[package]]
 name = "tomlkit"
 version = "0.11.6"
 description = "Style preserving TOML library"
@@ -406,6 +443,19 @@ dev = ["py-make (>=0.1.0)", "twine", "wheel"]
 notebook = ["ipywidgets (>=6)"]
 slack = ["slack-sdk"]
 telegram = ["requests"]
+
+[[package]]
+name = "twirp"
+version = "0.0.7"
+description = "Twirp server and client lib"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+protobuf = "*"
+requests = "*"
+structlog = "*"
 
 [[package]]
 name = "typing-extensions"
@@ -460,7 +510,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11"
-content-hash = "d7dfbf7eb354675bd72599f1b9f38ba7d2a20502d0743484627270197ce4ee9d"
+content-hash = "a4100d831f87a1314056d8aec3044f68ee1c5717534863113812a3681f921414"
 
 [metadata.files]
 aiofiles = [
@@ -580,6 +630,10 @@ jinja2 = [
     {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
     {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
 ]
+livekit-server-sdk-python = [
+    {file = "livekit_server_sdk_python-0.4.0-py3-none-any.whl", hash = "sha256:87cf2a64ec96f4dc90c7c5893e78d1389d2e874a1f66cccb7644465ebbf61c8a"},
+    {file = "livekit_server_sdk_python-0.4.0.tar.gz", hash = "sha256:b9e9b4eb0651a9f01a19cae219acb2dbb3082cb12f9a7990b74233bdb65e5f5f"},
+]
 logfury = [
     {file = "logfury-1.0.1-py3-none-any.whl", hash = "sha256:b4f04be1701a1df644afc3384d6167d64c899f8036b7eefc3b6c570c6a9b290b"},
     {file = "logfury-1.0.1.tar.gz", hash = "sha256:130a5daceab9ad534924252ddf70482aa2c96662b3a3825a7d30981d03b76a26"},
@@ -690,6 +744,22 @@ multidict = [
 prisma = [
     {file = "prisma-0.7.1-py3-none-any.whl", hash = "sha256:5abc36428e2d8a6f6f0bc448417fe3b8eff58fe0c4dd328e211719bb8e89079b"},
     {file = "prisma-0.7.1.tar.gz", hash = "sha256:67b0d05c7531ed93e00004bbe505ee8ac0bedfa93420330c1de4ea96fe0491b5"},
+]
+protobuf = [
+    {file = "protobuf-4.21.11-cp310-abi3-win32.whl", hash = "sha256:25266bf373ee06d5d66f9eb1ec9d434b243dccce5c32faf151054cfa6f9dcbf1"},
+    {file = "protobuf-4.21.11-cp310-abi3-win_amd64.whl", hash = "sha256:260e346927fd4e6fbb49ab545137b19610c24a1d853dc5f29ddf777ab1987211"},
+    {file = "protobuf-4.21.11-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:4d01ef83517c181d60ea1c6d0b2f644be250ade740d6554a2f5a021b1ad622e3"},
+    {file = "protobuf-4.21.11-cp37-abi3-manylinux2014_aarch64.whl", hash = "sha256:a5a14b907a191319e7a58b38c583bbf50deb21e002f723a912c5e4f6969a778e"},
+    {file = "protobuf-4.21.11-cp37-abi3-manylinux2014_x86_64.whl", hash = "sha256:553e35c0878f6855e55f01a14561e6bce6df79b6636a5acf83b9d9ac7eab7922"},
+    {file = "protobuf-4.21.11-cp37-cp37m-win32.whl", hash = "sha256:4b75c947289a2e9c1f37d21c593f1ef6fb4fed33977dfb2ac84f799eb29a8ff4"},
+    {file = "protobuf-4.21.11-cp37-cp37m-win_amd64.whl", hash = "sha256:efb16b16fd3eef25357f84d516062753014b76279ce4e0ec4880badd2fba7370"},
+    {file = "protobuf-4.21.11-cp38-cp38-win32.whl", hash = "sha256:d91a47c77b33580024b0271b65bb820c4e0264c25eb49151ad01e691de8fa0b6"},
+    {file = "protobuf-4.21.11-cp38-cp38-win_amd64.whl", hash = "sha256:bab4b21a986ded225b9392c07ce21c35d790951f51e1ebfd32e4d443b05c3726"},
+    {file = "protobuf-4.21.11-cp39-cp39-win32.whl", hash = "sha256:c3b9e329b4c247dc3ba5c50f60915a84e08278eb6d9e3fa674d0d04ff816bfd7"},
+    {file = "protobuf-4.21.11-cp39-cp39-win_amd64.whl", hash = "sha256:85ccb4753ee21de7dc81a7a68a051f25dbe133ffa01a639ac998427d0b223387"},
+    {file = "protobuf-4.21.11-py2.py3-none-any.whl", hash = "sha256:4922e3320ed70e81f05060822da36923d09fd9e04e17f411f2d8d8d0070f9f5c"},
+    {file = "protobuf-4.21.11-py3-none-any.whl", hash = "sha256:a944dc9550baae276afc7dc8193191d4c2ad660270a1e5ed5a71539817ebe2e2"},
+    {file = "protobuf-4.21.11.tar.gz", hash = "sha256:2c6a4d13732d9b094db31b3841986c38b17ac61a3fe05ee26a779d94c4c3fb43"},
 ]
 pydantic = [
     {file = "pydantic-1.10.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:bb6ad4489af1bac6955d38ebcb95079a836af31e4c4f74aba1ca05bb9f6027bd"},
@@ -811,6 +881,10 @@ sniffio = [
     {file = "sniffio-1.3.0-py3-none-any.whl", hash = "sha256:eecefdce1e5bbfb7ad2eeaabf7c1eeb404d7757c379bd1f7e5cce9d8bf425384"},
     {file = "sniffio-1.3.0.tar.gz", hash = "sha256:e60305c5e5d314f5389259b7f22aaa33d8f7dee49763119234af3755c55b9101"},
 ]
+structlog = [
+    {file = "structlog-22.3.0-py3-none-any.whl", hash = "sha256:b403f344f902b220648fa9f286a23c0cc5439a5844d271fec40562dbadbc70ad"},
+    {file = "structlog-22.3.0.tar.gz", hash = "sha256:e7509391f215e4afb88b1b80fa3ea074be57a5a17d794bd436a5c949da023333"},
+]
 tomlkit = [
     {file = "tomlkit-0.11.6-py3-none-any.whl", hash = "sha256:07de26b0d8cfc18f871aec595fda24d95b08fef89d147caa861939f37230bf4b"},
     {file = "tomlkit-0.11.6.tar.gz", hash = "sha256:71b952e5721688937fb02cf9d354dbcf0785066149d2855e44531ebdd2b65d73"},
@@ -818,6 +892,10 @@ tomlkit = [
 tqdm = [
     {file = "tqdm-4.64.1-py2.py3-none-any.whl", hash = "sha256:6fee160d6ffcd1b1c68c65f14c829c22832bc401726335ce92c52d395944a6a1"},
     {file = "tqdm-4.64.1.tar.gz", hash = "sha256:5f4f682a004951c1b450bc753c710e9280c5746ce6ffedee253ddbcbf54cf1e4"},
+]
+twirp = [
+    {file = "twirp-0.0.7-py3-none-any.whl", hash = "sha256:978294787f07d9f5489e6e32ef050d4d8b619bdffcbe80b248797518b4f69871"},
+    {file = "twirp-0.0.7.tar.gz", hash = "sha256:692b055d5da6e8ec29ded5dc93682c3ed5ec608bb9cb14529139a3b31cc2a44a"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.4.0-py3-none-any.whl", hash = "sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e"},
