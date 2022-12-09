@@ -2,9 +2,6 @@ import os
 
 from sanic import Sanic
 
-if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")):
-    import concert_backend.routers.frontend
-
 app = Sanic("concert_backend")
 
 if os.getenv("DEV") or bool(int(os.getenv("ENABLE_CORS", 0))):
