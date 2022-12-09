@@ -4,15 +4,16 @@ from sanic import Sanic, json
 
 app = Sanic("concert_backend")
 
-if os.getenv("DEV"):
+if os.getenv("DEV") or bool(int(os.getenv("ENABLE_CORS"))):
     app.config.CORS = True
     app.config.CORS_ALLOW_HEADERS = "*"
     app.config.CORS_ALWAYS_SEND = True
     app.config.CORS_AUTOMATIC_OPTIONS = True
     app.config.CORS_METHODS = "*"
-    app.config.CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*")
+    app.config.CORS_ORIGINS = ",".join([*os.getenv("CORS_ORIGINS", "").split(","), os.getenv("FRONTEND_URL")])
 
 
 @app.route("/")
 async def index(_):
+    print(_.app.config.CORS_ORIGINS)
     return json({"message": "Hello, world!"})
