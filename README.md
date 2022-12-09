@@ -5,6 +5,8 @@ Source code for my project made for the [MongoDB Atlas Hackathon 2022 on DEV](ht
 Will be hosted live until Jan 1 2022.
 Hosted live at: https://concert.arnu515.me
 
+Blog post: https://dev.to/devteam/announcing-the-mongodb-atlas-hackathon-2022-on-dev-2107
+
 ## Prerequisites
 
 - Python3.11 with the [Poetry](https://python-poetry.org) package manager installed.
