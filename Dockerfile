@@ -47,6 +47,7 @@ COPY ./frontend .
 
 # Build the app
 RUN pnpm build
+RUN ls
 
 # RUNNING BACKEND
 FROM python:3.11-slim AS backend
@@ -82,7 +83,7 @@ COPY ./backend .
 
 # Copy required files from builders
 COPY --from=doppler /app/.env .
-COPY --from=frontend /app/build ./static
+COPY --from=frontend /app/build/ /static
 
 RUN poetry run prisma py generate
 
