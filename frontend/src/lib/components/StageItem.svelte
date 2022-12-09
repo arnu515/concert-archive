@@ -10,7 +10,7 @@
   <span class="text-gray-500 text-sm">{stage.id}</span>
   </h3>
   <div class="text-lg flex items-center justify-between">
-    <p class="flex items-center gap-2"><img src="{stage.owner.avatar_url}" class="w-8 h-8 rounded-full border border-white" alt="{stage.owner.id}'s avatar"> {stage.owner.id}</p>
+    <p class="flex items-center gap-2"><img src="{stage.owner.avatar_url}" class="w-8 h-8 rounded-full border border-white" alt="{stage.owner.username}'s avatar"> {stage.owner.username}</p>
   <div class="flex items-center gap-2">
     {#if stage.owner_id === $user?.id}
     <span class="badge badge-warning">Your stage</span>
