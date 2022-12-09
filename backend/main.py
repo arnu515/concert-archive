@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 
 from concert_backend import app
+import concert_backend.routers.frontend
 
 load_dotenv()
 
