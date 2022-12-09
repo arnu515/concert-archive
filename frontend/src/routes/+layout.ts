@@ -16,3 +16,5 @@ export const load: LayoutLoad = async ({ url }) => {
 
 	await refreshToken(fetch);
 };
+
+export const ssr = false;
