@@ -14,3 +14,15 @@ export interface Stage {
 	owner_id: string;
 	color: string;
 }
+
+export interface ChatMessage {
+	id: string;
+	type: 'TEXT' | 'FILE' | 'EVENT';
+	message_data: string;
+	stage_id: string;
+	user_id: string;
+	created_at: string;
+	updated_at: string;
+	stage: Stage;
+	user: User;
+}
