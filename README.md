@@ -14,6 +14,7 @@ Blog post: https://dev.to/devteam/announcing-the-mongodb-atlas-hackathon-2022-on
 - The [Livekit SFU server binary](https://github.com/livekit/livekit/releases/tag/v1.3.1) downloaded on your computer.
 - A MongoDB database. You can host one on [MongoDB Atlas](https://cloud.mongodb.com) for free.
 - A [GitHub](https://github.com/settings/developers) and [GitLab](https://gitlab.com/-/profile/applications) OAuth app.
+- A [Backblaze B2](https://backblaze.com/b2) bucket for storing files.
 
 ## Get started
 
