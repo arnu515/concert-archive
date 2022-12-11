@@ -15,8 +15,6 @@ RUN pnpm build
 
 FROM python:3.11-slim as runner
 
-RUN apt-get install -y libffi-dev libssl-dev gcc make g++
-
 RUN pip install --upgrade pip
 
 RUN curl https://install.python-poetry.org | POETRY_HOME=/opt/poetry python3 -
