@@ -42,4 +42,4 @@ RUN poetry run prisma generate
 
 EXPOSE 5000
 
-CMD ["python", "main.py"]
+CMD ["poetry", "run", "python", "main.py"]
