@@ -4,13 +4,13 @@
 	import { onMount } from 'svelte';
 	import '../app.postcss';
 	import { page } from '$app/stores';
-  import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
-  import toasts from '$lib/stores/toasts';
-  import {slide} from "svelte/transition"
-  import { fetchAllStages } from '$lib/stores/stages';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import toasts from '$lib/stores/toasts';
+	import { slide } from 'svelte/transition';
+	import { fetchAllStages } from '$lib/stores/stages';
 
 	onMount(async () => {
-  await fetchAllStages()
+		await fetchAllStages();
 
 		if (window.location.search.includes('code')) {
 			const qs = $page.url.searchParams;
@@ -29,24 +29,38 @@
 </script>
 
 {#if $tokenLoading}
-<div class="flex items-center justify-center mt-10">
-<LoadingSpinner t="4px" />
-</div>
+	<div class="mt-10 flex items-center justify-center">
+		<LoadingSpinner t="4px" />
+	</div>
 {:else}
 	<Navbar />
 	<slot />
 {/if}
 
 <div class="toast">
-  {#each $toasts as t}
-    <div class="alert rounded flex-col items-start min-w-[150px] {t.class || "alert-info"}" transition:slide>
-      <h3 class="font-medium flex items-center justify-between w-full">{t.title}
-      <button on:click={() => toasts.update(() => $toasts.filter(i => i.id !== t.id))} class="btn btn-circle btn-ghost btn-xs"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-</svg>
-</button>
-      </h3>
-      <p class="text-sm">{t.message}</p>
-    </div>
-  {/each}
+	{#each $toasts as t}
+		<div
+			class="alert min-w-[150px] flex-col items-start rounded {t.class || 'alert-info'}"
+			transition:slide
+		>
+			<h3 class="flex w-full items-center justify-between font-medium">
+				{t.title}
+				<button
+					on:click={() => toasts.update(() => $toasts.filter((i) => i.id !== t.id))}
+					class="btn-ghost btn-xs btn-circle btn"
+					><svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="h-5 w-5"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</h3>
+			<p class="text-sm">{t.message}</p>
+		</div>
+	{/each}
 </div>
