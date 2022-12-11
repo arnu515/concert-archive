@@ -35,7 +35,7 @@ RUN poetry install --no-dev
 COPY ./backend .
 COPY --from=frontend /app/build ./static
 
-RUN prisma generate
+RUN poetry run prisma generate
 
 EXPOSE 5000
 
