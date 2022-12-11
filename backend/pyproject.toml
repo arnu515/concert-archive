@@ -8,7 +8,6 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 sanic = {extras = ["ext"], version = "^22.9.1"}
-prisma = "^0.7.1"
 python-dotenv = "^0.21.0"
 httpx = "^0.23.0"
 pyjwt = "^2.6.0"
@@ -16,6 +15,7 @@ pydantic = "^1.10.2"
 bcrypt = "^4.0.1"
 b2sdk = "^1.18.0"
 livekit-server-sdk-python = "^0.4.0"
+prisma = {git = "https://github.com/RobertCraigie/prisma-client-py", rev = "refactor/remove-pkg-cli"}
 
 
 [build-system]
