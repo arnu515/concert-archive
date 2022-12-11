@@ -24,11 +24,12 @@ ENV PATH="/opt/poetry/bin:${PATH}"
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY ./backend/pyproject.toml ./
+COPY ./backend/poetry.lock ./
 
 RUN poetry install --no-dev
 
-COPY . .
+COPY ./backend .
 COPY --from=frontend /app/build ./static
 
 RUN prisma generate
