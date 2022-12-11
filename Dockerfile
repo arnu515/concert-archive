@@ -1,3 +1,5 @@
+ARG USE_DOPPLER="false"
+ARG DOPPLER_TOKEN=""
 
 FROM node:18-alpine as frontend
 
@@ -39,6 +41,11 @@ COPY ./backend .
 COPY --from=frontend /app/build ./static
 
 RUN poetry run prisma generate
+
+RUN if [ "$USE_DOPPLER" = "true" ] ; then && \
+  curl -sSL https://cli.doppler.com/install.sh | sh && \
+  doppler configure set token $DOPPLER_TOKEN --scope / && \
+  doppler secrets download --format env --no-file > .env
 
 EXPOSE 5000
 
