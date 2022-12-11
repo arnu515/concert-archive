@@ -4,7 +4,8 @@ WORKDIR /app
 
 RUN npm i -g pnpm
 
-COPY frontend/package.json frontend/yarn.lock ./
+COPY ./frontend/package.json ./
+COPY ./frontend/pnpm_lock.yaml ./
 
 RUN pnpm i
 
