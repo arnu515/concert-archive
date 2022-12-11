@@ -1,3 +1,6 @@
+ARG PUBLIC_LIVEKIT_URL
+ARG DATABASE_URL
+
 FROM node:18-alpine as frontend
 
 WORKDIR /app
@@ -10,7 +13,6 @@ COPY ./frontend/pnpm-lock.yaml ./
 RUN pnpm i
 
 COPY frontend .
-
 RUN pnpm build
 
 FROM python:3.11-slim as runner
