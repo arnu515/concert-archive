@@ -12,7 +12,7 @@ COPY frontend .
 
 RUN pnpm build
 
-FROM python:3.11-slim.17 as runner
+FROM python:3.11-slim as runner
 
 RUN apt install build-essential
 
