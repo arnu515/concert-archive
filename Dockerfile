@@ -1,5 +1,3 @@
-ARG PUBLIC_LIVEKIT_URL
-ARG DATABASE_URL
 
 FROM node:18-alpine as frontend
 
@@ -11,6 +9,9 @@ COPY ./frontend/package.json ./
 COPY ./frontend/pnpm-lock.yaml ./
 
 RUN pnpm i
+
+# change as required
+ENV PUBLIC_LIVEKIT_URL="https://concert.arnu515.me"
 
 COPY frontend .
 RUN pnpm build
