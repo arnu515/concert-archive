@@ -5,7 +5,7 @@ WORKDIR /app
 RUN npm i -g pnpm
 
 COPY ./frontend/package.json ./
-COPY ./frontend/pnpm_lock.yaml ./
+COPY ./frontend/pnpm-lock.yaml ./
 
 RUN pnpm i
 
