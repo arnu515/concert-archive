@@ -13,6 +13,12 @@ export const stageReconnecting = writable<boolean>(false);
 export const stageCanSpeak = writable<boolean>(false);
 export const chatMessages = writable<ChatMessage[]>([]);
 export const stageSpeakers = writable<User['id'][]>([]);
+export const stageCurrentlySpeaking = writable<User['id'][]>([]);
+
+// writing null; inside because eslint doesn't like empty functions
+export let updateRoom = () => {
+	null;
+};
 
 export async function connectToStage(token: string, onDisconnect: () => void) {
 	const r = new Room({
@@ -25,6 +31,9 @@ export async function connectToStage(token: string, onDisconnect: () => void) {
 	});
 
 	const startTime = Date.now();
+	updateRoom = () => {
+		stageRoom.set(r);
+	};
 
 	r.on(RoomEvent.ParticipantConnected, (p) => {
 		console.log('Participant connected', p.identity, p.name, p.metadata, p.permissions);
@@ -47,6 +56,11 @@ export async function connectToStage(token: string, onDisconnect: () => void) {
 			.on(ParticipantEvent.IsSpeakingChanged, (s) => {
 				console.log(p.name, 'changed speaking state', s);
 				stageRoom.set(r);
+				if (s) {
+					stageCurrentlySpeaking.update((speakers) => [...new Set([...speakers, p.identity])]);
+				} else {
+					stageCurrentlySpeaking.update((speakers) => speakers.filter((i) => i !== p.identity));
+				}
 				if (p.permissions?.canPublish) {
 					stageSpeakers.update((speakers) => [...new Set([...speakers, p.identity])]);
 				} else {
@@ -111,8 +125,9 @@ export async function connectToStage(token: string, onDisconnect: () => void) {
 			console.log('Audio playback status changed', r.canPlaybackAudio);
 			stageRoom.set(r);
 		})
-		.on(RoomEvent.TrackSubscribed, (_t, s, p) => {
+		.on(RoomEvent.TrackSubscribed, (t, s, p) => {
 			console.log('subscribed to track', s.trackSid, p.identity);
+			document.body.appendChild(t.attach());
 			stageRoom.set(r);
 		})
 		.on(RoomEvent.TrackUnsubscribed, (_t, s, p) => {
@@ -173,6 +188,9 @@ export function leaveStage() {
 	}
 
 	r.disconnect();
+	updateRoom = () => {
+		null;
+	};
 	stageRoom.set(null);
 	stageToken.set(null);
 	stageSpeakers.set([]);

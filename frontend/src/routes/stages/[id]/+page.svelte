@@ -12,7 +12,8 @@
 		connectToStage,
 		stageCanSpeak,
 		chatMessages,
-		stageSpeakers
+		stageSpeakers,
+		updateRoom
 	} from '$lib/stores/stage';
 	import { addToasts } from '$lib/stores/toasts';
 	import type { Stage } from '$lib/util/types';
@@ -29,6 +30,8 @@
 	let isSendingChatMessage = false;
 	let messagesBox: HTMLDivElement | undefined;
 	let isTogglingSpeaker = false;
+  let isTogglingMic = false;
+  let isMicEnabled = false;
 
 	onMount(async () => {
 		if (!$user) return goto('/auth?next=' + encodeURIComponent(window.location.pathname));
@@ -174,6 +177,49 @@
 		}
 	}
 
+  async function toggleMic() {
+    if (isTogglingMic) return;
+    if (!navigator.mediaDevices) {
+      addToasts([
+        {
+          title: 'Failed',
+          class: 'alert-warning',
+          message: 'Your browser does not support media devices.'
+        }
+      ]);
+      return;
+    }
+    // check for mic devices
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const hasMic = devices.some((d) => d.kind === 'audioinput');
+    if (!hasMic) {
+      addToasts([
+        {
+          title: 'Failed',
+          class: 'alert-warning',
+          message: 'No microphone found. Please connect one and try again.'
+        }
+      ]);
+      return;
+    }
+
+    if (isTogglingMic) return;
+    isTogglingMic = true;
+
+    if ($stageRoom?.localParticipant) {
+      await $stageRoom.localParticipant.setMicrophoneEnabled(!isMicEnabled, {
+        echoCancellation: true,
+        noiseSuppression: true
+      }, {
+        stopMicTrackOnMute: true
+      })
+      isMicEnabled = !isMicEnabled
+      // set local participant so that the UI updates
+      updateRoom()
+    }
+    isTogglingMic=false
+  }
+
 	// onDestroy(() => {
 	//   console.info("Leaving stage")
 	//   leaveStage()
@@ -221,8 +267,8 @@
 			</h1>
 			<div class="flex min-h-[4rem] items-center gap-4 overflow-x-auto pb-4">
 				{#if $stageCanSpeak}
-					<button class="btn-primary btn gap-4 text-white">
-						{#if true}
+					<button on:click={toggleMic} disabled={isTogglingMic} class="btn-primary btn gap-4 text-white">
+						{#if isMicEnabled}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="h-5 w-5"
@@ -238,7 +284,7 @@
 								<path d="M5 10a7 7 0 0 0 14 0" />
 								<line x1="8" y1="21" x2="16" y2="21" />
 								<line x1="12" y1="17" x2="12" y2="21" />
-							</svg> Unmute
+							</svg> Mute
 						{:else}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -256,7 +302,7 @@
 								<path d="M5 10a7 7 0 0 0 10.846 5.85m2.002 -2a6.967 6.967 0 0 0 1.152 -3.85" />
 								<line x1="8" y1="21" x2="16" y2="21" />
 								<line x1="12" y1="17" x2="12" y2="21" />
-							</svg> Mute
+							</svg> Unmute
 						{/if}
 					</button>
 				{:else}
